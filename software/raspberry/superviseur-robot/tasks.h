@@ -64,8 +64,14 @@ private:
     /**********************************************************************/
     ComMonitor monitor;
     ComRobot robot;
+    Camera camera;
+    Arena arene;
+    std::list<Position> position;
+    
     int robotStarted = 0;
     int move = MESSAGE_ROBOT_STOP;
+    int camstart = 0;
+    int positionstart = 0;
     
     /**********************************************************************/
     /* Tasks                                                              */
@@ -76,7 +82,13 @@ private:
     RT_TASK th_openComRobot;
     RT_TASK th_startRobot;
     RT_TASK th_move;
-    
+    RT_TASK th_battery_level;
+    RT_TASK th_receive_image;
+    RT_TASK th_find_arena;
+    RT_TASK th_camera;
+    RT_TASK th_fermer_camera;
+    RT_TASK th_position_robot;
+  
     /**********************************************************************/
     /* Mutex                                                              */
     /**********************************************************************/
@@ -84,6 +96,10 @@ private:
     RT_MUTEX mutex_robot;
     RT_MUTEX mutex_robotStarted;
     RT_MUTEX mutex_move;
+    RT_MUTEX mutex_arena;
+    RT_MUTEX mutex_camera;
+    RT_MUTEX mutex_image;
+    RT_MUTEX mutex_test_cam;
 
     /**********************************************************************/
     /* Semaphores                                                         */
@@ -92,6 +108,12 @@ private:
     RT_SEM sem_openComRobot;
     RT_SEM sem_serverOk;
     RT_SEM sem_startRobot;
+    RT_SEM sem_getBattery;
+    RT_SEM sem_arena;
+    RT_SEM sem_camera;
+    RT_SEM sem_fermer_camera;
+    RT_SEM sem_receive_image;
+    RT_SEM sem_position;
 
     /**********************************************************************/
     /* Message queues                                                     */
@@ -148,6 +170,13 @@ private:
      * @return Message read
      */
     Message *ReadInQueue(RT_QUEUE *queue);
+    
+    void BatteryLevel();
+    void OpenCamera();
+    void ReceiveImage(void *arg);
+    void FindArena(void *arg);
+    void CloseCamera();
+    void PositionRobot(void *arg);
 
 };
 
